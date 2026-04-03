@@ -1,0 +1,68 @@
+# Docker Compose for running the Frank!Framework quickstart setup.
+#
+# Services:
+#   - frankframework: the core application (runs on port 8080)
+#   - frank-flow: visual configuration tool (runs on port 8081)
+#   - swagger-ui: API docs viewer (runs on port 8082)
+#
+# Start the services with:
+#   docker compose up --watch
+
+services:
+  frankframework:
+    image: frankframework/frankframework:latest
+    ports:
+      - "8080:8080"
+    configs:
+      - source: resources.yml
+        target: /opt/frank/resources/resources.yml
+    environment:
+      instance.name: ff-quick-start
+      customViews.names: FrankFlow
+      customViews.FrankFlow.name: Frank!Flow
+      customViews.FrankFlow.url: http://localhost:8081
+      # Enable CORS. The default Allow-Origin is set to "*" for all endpoints, which is sufficient for local development. For production, consider setting a specific allowed origin instead.
+      cors.enforced: "true"
+    develop:
+      watch:
+        - action: sync
+          initial_sync: true
+          path: ./configurations/
+          target: /opt/frank/configurations/
+
+        # Optional additional watch actions for other directories (e.g., resources, secrets)
+        # - action: sync
+        #   path: ./resources
+        #   target: /resources
+        # - action: sync+restart
+        #   path: ./secrets
+        #   target: /secrets
+
+  frank-flow:
+    image: frankframework/frank-flow:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./configurations/:/opt/frank/configurations
+    environment:
+      configurations.directory: /opt/frank/configurations
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui:v5.32.0
+    ports:
+      - "8082:8080"
+    environment:
+      URLS: |
+        [
+          {"name":"Configurations API","url":"http://localhost:8080/iaf/api/webservices/openapi.json"},
+          {"name":"Frank!Framework API","url":"http://localhost:8080/iaf/api/openapi/v3.yaml"}
+        ]
+
+configs:
+  # JDBC datasource config for Frank!Framework
+  resources.yml:
+    content: |
+      jdbc:
+        - name: "ff-quick-start"
+          type: "org.h2.jdbcx.JdbcDataSource"
+          url: "jdbc:h2:mem:test;NON_KEYWORDS=VALUE;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;TRACE_LEVEL_FILE=0;"
