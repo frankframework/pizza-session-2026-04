@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Foodfacts</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="background-container" aria-hidden="true">
+      <div class="block" id="block1"></div>
+      <div class="block" id="block2"></div>
+      <div class="block" id="block3"></div>
+      <div class="block" id="block4"></div>
+    </div>
+
+    <main class="page">
+      <header class="header">
+        <h1>FoodFacts</h1>
+        <p>Hover a card to flip it. Click a card for full nutrition details.</p>
+      </header>
+
+      <section id="grid" class="grid" aria-label="Product nutrition cards"></section>
+    </main>
+
+    <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-content">
+        <button id="modal-close" class="modal-close" aria-label="Close nutrition details">&times;</button>
+        <h2 id="modal-title">Nutrition Facts</h2>
+        <p id="modal-code" class="modal-code"></p>
+        <ul id="modal-list" class="facts-list"></ul>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
+
