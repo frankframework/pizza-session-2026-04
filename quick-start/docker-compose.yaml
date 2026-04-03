@@ -17,10 +17,13 @@ services:
       - source: resources.yml
         target: /opt/frank/resources/resources.yml
     environment:
-      instance.name: ff-quick-start
+      instance.name: FoodFacts
+      log.level: WARN
+      dtap.stage: LOC
       customViews.names: FrankFlow
       customViews.FrankFlow.name: Frank!Flow
       customViews.FrankFlow.url: http://localhost:8081
+      warnings.suppress.sqlInjections.ManageDatabase: true
       # Enable CORS. The default Allow-Origin is set to "*" for all endpoints, which is sufficient for local development. For production, consider setting a specific allowed origin instead.
       cors.enforced: "true"
     develop:
@@ -63,6 +66,6 @@ configs:
   resources.yml:
     content: |
       jdbc:
-        - name: "ff-quick-start"
+        - name: "foodfacts"
           type: "org.h2.jdbcx.JdbcDataSource"
           url: "jdbc:h2:mem:test;NON_KEYWORDS=VALUE;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;TRACE_LEVEL_FILE=0;"

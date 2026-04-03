@@ -1,0 +1,33 @@
+<Module
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://schemas.frankframework.org/FrankConfig.xsd"
+	>
+	<ConfigWarning active="${= openfoodfacts.search == '' }">No search URL set</ConfigWarning>
+
+	<Adapter name="findProduct" active="${= openfoodfacts.search != '' }">
+		<Receiver
+			name="find-product"
+			>
+			<ApiListener
+				uriPattern="search/{search}"
+				allowAllParams="false"
+			/>
+		</Receiver>
+		<Pipeline>
+			<Exits>
+				<Exit name="EXIT" state="SUCCESS" />
+			</Exits>
+
+			<SenderPipe name="findProduct">
+				<HttpSender>
+					<Param name="url" pattern="${openfoodfacts.search}/search?q={search}" />
+				</HttpSender>
+		<!--		<OpenApiOutputValidator useAsOutputValidator="true" openApiDefinition="openapi-search-a-licious.json" path="/search" method="GET" />
+	-->
+			</SenderPipe>
+
+			<DataSonnetPipe styleSheetName="nutritional-facts.jsonnet" name="nutritional-facts" />
+
+		</Pipeline>
+	</Adapter>
+</Module>

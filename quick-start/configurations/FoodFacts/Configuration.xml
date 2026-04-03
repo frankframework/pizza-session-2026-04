@@ -1,0 +1,12 @@
+<Module>
+	<Configuration active="${= openfoodfacts.url == '' || openfoodfacts.search == '' }">
+		<ConfigWarning>Unable to load Configuration: URL(s) not set</ConfigWarning>
+	</Configuration>
+
+	<Configuration active="${= openfoodfacts.url != '' }">
+		<ConfigWarning active="${= openfoodfacts.url.endsWith('net') }">Test Environment</ConfigWarning>
+
+		<Include ref="get-product.xml" />
+		<Include ref="find-product.xml" />
+	</Configuration>
+</Module>

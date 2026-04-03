@@ -1,0 +1,30 @@
+<Module
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://schemas.frankframework.org/FrankConfig.xsd"
+	>
+	<ConfigWarning active="${= openfoodfacts.url == '' }">No API URL set</ConfigWarning>
+
+	<Adapter name="getProduct" active="${= openfoodfacts.url != '' }">
+		<Receiver
+			name="get-product"
+			>
+			<ApiListener
+				uriPattern="products/{barcode}"
+				allowAllParams="false"
+			/>
+		</Receiver>
+		<Pipeline>
+			<Exits>
+				<Exit name="EXIT" state="SUCCESS" />
+			</Exits>
+
+			<SenderPipe name="findProduct">
+				<HttpSender>
+					<Param name="url" pattern="${openfoodfacts.url}/api/v2/product/{barcode}" />
+				</HttpSender>
+			</SenderPipe>
+
+			<DataSonnetPipe styleSheetName="protiens.jsonnet" name="protiens" storeResultInSessionKey="protiens" />
+		</Pipeline>
+	</Adapter>
+</Module>
