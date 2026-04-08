@@ -20,7 +20,7 @@
 
 			<SenderPipe name="findProduct">
 				<HttpSender>
-					<Param name="url" pattern="${openfoodfacts.search}/search?q={search}" />
+					<Param name="url" pattern="${openfoodfacts.search}/search?page_size=30&amp;q={search}" />
 				</HttpSender>
 		<!--		<OpenApiOutputValidator useAsOutputValidator="true" openApiDefinition="openapi-search-a-licious.json" path="/search" method="GET" />
 	-->

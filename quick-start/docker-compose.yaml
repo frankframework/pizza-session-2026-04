@@ -28,6 +28,7 @@ services:
       customViews.FoodFacts.name: FoodFacts
       customViews.FoodFacts.url: /webcontent/food-facts
       warnings.suppress.sqlInjections.ManageDatabase: true
+      configurations.directory.classLoaderType: ScanningDirectoryClassLoader
       # Enable CORS. The default Allow-Origin is set to "*" for all endpoints, which is sufficient for local development. For production, consider setting a specific allowed origin instead.
       cors.enforced: "true"
     develop:
