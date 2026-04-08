@@ -20,13 +20,13 @@ services:
       instance.name: FoodFacts
       log.level: WARN
       dtap.stage: LOC
-      customViews.names: FrankFlow, SwaggerUI, FoodFacts
+      customViews.names: FrankFlow,SwaggerUI,FoodFacts
       customViews.FrankFlow.name: Frank!Flow
-      customViews.FrankFlow.url: http://localhost:8081
+      customViews.FrankFlow.url: http://localhost:8081/
       customViews.SwaggerUI.name: SwaggerUI
-      customViews.SwaggerUI.url: http://localhost:8082
+      customViews.SwaggerUI.url: http://localhost:8082/
       customViews.FoodFacts.name: FoodFacts
-      customViews.FoodFacts.url: /webcontent/food-facts
+      customViews.FoodFacts.url: webcontent/FoodFacts/
       warnings.suppress.sqlInjections.ManageDatabase: true
       configurations.directory.classLoaderType: ScanningDirectoryClassLoader
       # Enable CORS. The default Allow-Origin is set to "*" for all endpoints, which is sufficient for local development. For production, consider setting a specific allowed origin instead.

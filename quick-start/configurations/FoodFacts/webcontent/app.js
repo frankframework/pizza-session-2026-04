@@ -1,6 +1,9 @@
-import { products } from "./data.js";
 import JsBarcode from "https://cdn.jsdelivr.net/npm/jsbarcode@3.12.1/+esm";
 
+const page = document.getElementById("page");
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const resultsMeta = document.getElementById("results-meta");
 const grid = document.getElementById("grid");
 const modal = document.getElementById("modal");
 const modalClose = document.getElementById("modal-close");
@@ -43,8 +46,13 @@ const closeModal = () => {
   modal.setAttribute("aria-hidden", "true");
 };
 
-const render = () => {
-  grid.innerHTML = products
+const render = (items) => {
+  if (items.length === 0) {
+    grid.innerHTML = `<p class="empty-state">No products found for this search.</p>`;
+    return;
+  }
+
+  grid.innerHTML = items
     .map(
       (product) => `
       <article class="card" tabindex="0" data-code="${product.code}">
@@ -75,7 +83,7 @@ const render = () => {
 
   grid.querySelectorAll(".card").forEach((card) => {
     card.addEventListener("click", () => {
-      const selected = products.find((p) => p.code === card.dataset.code);
+      const selected = items.find((p) => p.code === card.dataset.code);
       if (selected) {
         openModal(selected);
       }
@@ -84,13 +92,51 @@ const render = () => {
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        const selected = products.find((p) => p.code === card.dataset.code);
+        const selected = items.find((p) => p.code === card.dataset.code);
         if (selected) {
           openModal(selected);
         }
       }
     });
   });
+};
+
+const loadProducts = async (query) => {
+  const normalized = query.trim();
+  if (!normalized) {
+    return [];
+  }
+
+  const response = await fetch(`/api/search/${encodeURIComponent(normalized)}`);
+  if (!response.ok) {
+    throw new Error(`Search request failed: ${response.status}`);
+  }
+
+  const payload = await response.json();
+  return Array.isArray(payload) ? payload : [];
+};
+
+const showResults = async (query) => {
+  const normalized = query.trim();
+
+  page.classList.add("searched");
+  if (!normalized) {
+    render([]);
+    resultsMeta.textContent = "Enter a search term to find products.";
+    return;
+  }
+
+  resultsMeta.textContent = "Searching...";
+
+  try {
+    const foundProducts = await loadProducts(normalized);
+    render(foundProducts);
+    resultsMeta.textContent = `${foundProducts.length} result(s) for "${normalized}"`;
+  } catch (error) {
+    console.error(error);
+    render([]);
+    resultsMeta.textContent = "Search failed. Please try again.";
+  }
 };
 
 const createFloatingBlocks = () => {
@@ -190,26 +236,6 @@ const createFloatingBlocks = () => {
   animate();
 };
 
-const applyLetterBobbing = () => {
-  const targets = document.querySelectorAll(".header h1, .header p");
-
-  targets.forEach((element) => {
-    const text = element.textContent || "";
-    element.classList.add("bob-text");
-    element.setAttribute("aria-label", text);
-    element.textContent = "";
-
-    [...text].forEach((char, index) => {
-      const span = document.createElement("span");
-      span.className = "bob-letter";
-      span.style.setProperty("--i", String(index));
-      span.setAttribute("aria-hidden", "true");
-      span.textContent = char === " " ? "\u00A0" : char;
-      element.appendChild(span);
-    });
-  });
-};
-
 modalClose.addEventListener("click", closeModal);
 modal.addEventListener("click", (event) => {
   if (event.target === modal) {
@@ -222,6 +248,9 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-render();
+searchForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await showResults(searchInput.value);
+});
+
 createFloatingBlocks();
-applyLetterBobbing();
