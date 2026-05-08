@@ -28,6 +28,9 @@ services:
       customViews.FoodFacts.name: FoodFacts
       customViews.FoodFacts.url: webcontent/FoodFacts/
       warnings.suppress.sqlInjections.ManageDatabase: true
+      # Is default in all docker images (https://github.com/frankframework/frankframework/blob/master/docker/Tomcat/webapp/src/scripts/catalinaAdditional.properties)
+      # configurations.directory.autoLoad: true
+      # Set this to automatically reload configurations when they change. This is useful for development, but may not be desired in production.
       configurations.directory.classLoaderType: ScanningDirectoryClassLoader
       # Enable CORS. The default Allow-Origin is set to "*" for all endpoints, which is sufficient for local development. For production, consider setting a specific allowed origin instead.
       cors.enforced: "true"
@@ -37,12 +40,13 @@ services:
           initial_sync: true
           path: ./configurations/
           target: /opt/frank/configurations/
-
         # Optional additional watch actions for other directories (e.g., resources, secrets)
-        # - action: sync
+        # - action: sync+restart
+        #   initial_sync: true
         #   path: ./resources
         #   target: /resources
         # - action: sync+restart
+        #   initial_sync: true
         #   path: ./secrets
         #   target: /secrets
 
